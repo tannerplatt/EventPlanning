@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Invites</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #333;
+        }
+        .invite {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .invite h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        .status {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+  
+    {<h1>Your Invites</h1>
+      {% if invites %}
+          <ul>
+          {% for invite in invites %}
+              <li>
+                  <strong>{{ invite.EventName }}</strong><br>
+                  <em>Date Sent: {{ invite.DateSent }}</em><br>
+                  <p>{{ invite.Text }}</p>
+                  <p>Status: {{ invite.RecipientStatus }}</p>
+      
+                  {% if invite.RecipientStatus == 'Pending' %}
+                      <a href="{{ url_for('respond_invite', invite_id=invite.InviteID, status='Accepted') }}">Accept</a> | 
+                      <a href="{{ url_for('respond_invite', invite_id=invite.InviteID, status='Rejected') }}">Reject</a>
+                  {% endif %}
+              </li>
+          {% endfor %}
+          </ul>
+      {% else %}
+          <p>You have no invites.</p>
+      {% endif %}      
+
+    <a href="/dashboard">← Back to Dashboard</a>
+
+</body>
+</html>

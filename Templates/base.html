@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Event Planning App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+        <a href="{{ url_for('invites') }}">Invites</a>
+        <a href="{{ url_for('events') }}">Events</a>
+        <a href="{{ url_for('create_event') }}">Create Event</a>
+        <a href="{{ url_for('vendors') }}">Vendors</a>
+        <a href="{{ url_for('login') }}">Logout</a>
+    </nav>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

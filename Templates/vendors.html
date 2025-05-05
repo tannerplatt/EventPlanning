@@ -1,0 +1,19 @@
+<!-- templates/vendors.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vendors</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <h1>Available Vendors</h1>
+  <ul>
+    {% for vendor in vendors %}
+      <li>
+        <strong>{{ vendor['name'] }}</strong> - {{ vendor['service'] }} (Owner: {{ vendor['owner'] }}, Staff: {{ vendor['staff'] }})
+      </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
