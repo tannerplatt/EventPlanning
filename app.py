@@ -30,10 +30,29 @@ def dashboard():
         return redirect(url_for('login'))
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    
+    # Get user's name
+    cursor.execute("SELECT Name FROM Users WHERE UserID = %s", (session['user_id'],))
+    user = cursor.fetchone()
+    
+    # Get user's events
     cursor.execute("SELECT * FROM Events WHERE UserID = %s", (session['user_id'],))
     events = cursor.fetchall()
+    
+    # Get user's invites
+    cursor.execute("""
+        SELECT Invites.InviteID, Events.Name AS event_name, Invites.RecipientStatus AS status
+        FROM Invites
+        JOIN Events ON Invites.EventID = Events.EventID
+        WHERE Invites.UserID = %s
+    """, (session['user_id'],))
+    invites = cursor.fetchall()
+    
     conn.close()
-    return render_template('dashboard.html', events=events)
+    return render_template('dashboard.html', 
+                         user_name=user['Name'],
+                         user_events=events,
+                         invites=invites)
 
 @app.route('/invites')
 def invites():
