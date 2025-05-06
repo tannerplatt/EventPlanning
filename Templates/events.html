@@ -1,14 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Events{% endblock %}
 {% block content %}
-<h2>All Events</h2>
-{% for event in events %}
-    <div class="card">
-        <h3>{{ event.Name }}</h3>
-        <p><strong>Date:</strong> {{ event.Date }}</p>
-        <p><strong>Venue:</strong> {{ event.VenueName }}</p>
-        <p><strong>Theme:</strong> {{ event.Theme }}</p>
-        <p>{{ event.Description }}</p>
+<div class="container">
+    <h1>All Events</h1>
+    <div class="events-grid">
+        {% for event in events %}
+        <div class="event-card">
+            <h3>{{ event.Name }}</h3>
+            <div class="event-details">
+                <p><strong>Date:</strong> {{ event.Date }}</p>
+                <p><strong>Venue:</strong> {{ event.VenueName }}</p>
+                <p><strong>Theme:</strong> {{ event.Theme }}</p>
+            </div>
+            <div class="event-description">
+                <p>{{ event.Description }}</p>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-{% endfor %}
+</div>
 {% endblock %}
