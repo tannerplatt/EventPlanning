@@ -17,12 +17,19 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    height: 100%;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: var(--dark-color);
     background-color: #f5f7fa;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Navigation */
@@ -31,14 +38,18 @@ nav {
     padding: 1rem 2rem;
     box-shadow: var(--box-shadow);
     margin-bottom: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
 }
 
 nav a {
     color: var(--secondary-color);
     text-decoration: none;
-    margin-right: 1.5rem;
     font-weight: 500;
     transition: var(--transition);
+    padding: 0.5rem;
 }
 
 nav a:hover {
@@ -50,6 +61,7 @@ nav a:hover {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+    flex: 1;
 }
 
 /* Headings */
@@ -125,6 +137,23 @@ h2 {
     box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
 }
 
+/* Checkbox Group */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-item input[type="checkbox"] {
+    width: auto;
+}
+
 /* Buttons */
 button,
 .btn {
@@ -137,6 +166,8 @@ button,
     font-size: 1rem;
     font-weight: 500;
     transition: var(--transition);
+    display: inline-block;
+    text-align: center;
 }
 
 button:hover,
@@ -215,6 +246,13 @@ a:hover {
     text-decoration: none;
 }
 
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -223,14 +261,21 @@ a:hover {
 
     nav {
         padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     nav a {
         display: block;
-        margin-bottom: 0.5rem;
+        width: 100%;
+        padding: 0.5rem 0;
     }
 
     .form-container {
         padding: 1.5rem;
+    }
+
+    .button-group {
+        flex-direction: column;
     }
 }

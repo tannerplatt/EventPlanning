@@ -1,19 +1,16 @@
 <!-- templates/vendors.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Vendors</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-</head>
-<body>
-  <h1>Available Vendors</h1>
+{% extends "base.html" %}
+{% block title %}Vendors{% endblock %}
+{% block content %}
+<h1>Available Vendors</h1>
+<div class="card">
   <ul>
     {% for vendor in vendors %}
-      <li>
-        <strong>{{ vendor['name'] }}</strong> - {{ vendor['service'] }} (Owner: {{ vendor['owner'] }}, Staff: {{ vendor['staff'] }})
-      </li>
+    <li>
+      <strong>{{ vendor['name'] }}</strong> - {{ vendor['service'] }} (Owner: {{ vendor['owner'] }}, Staff: {{
+      vendor['staff'] }})
+    </li>
     {% endfor %}
   </ul>
-</body>
-</html>
+</div>
+{% endblock %}

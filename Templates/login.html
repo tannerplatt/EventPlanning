@@ -1,40 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Planning - Login / Register</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Event Planning - Login / Register{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>Login</h1>
 
-<h1>Login</h1>
+    <!-- Login Form -->
+    <form method="POST" action="{{ url_for('login') }}" class="form-group">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <button type="submit">Login</button>
+    </form>
 
-<!-- Login Form -->
-<form method="POST" action="{{ url_for('login') }}">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required>
-    <button type="submit">Login</button>
-</form>
+    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #eee;">
 
-<hr>
+    <h2>Create a New Account</h2>
+    <!-- Registration Form -->
+    <form method="POST" action="{{ url_for('register') }}" class="form-group">
+        <div class="form-group">
+            <label for="new_name">Full Name</label>
+            <input type="text" id="new_name" name="new_name" required>
+        </div>
 
-<h2>Create a New Account</h2>
-<!-- Registration Form -->
-<form method="POST" action="{{ url_for('register') }}">
-    <label for="new_name">Full Name</label>
-    <input type="text" id="new_name" name="new_name" required>
+        <div class="form-group">
+            <label for="new_age">Age</label>
+            <input type="number" id="new_age" name="new_age" required>
+        </div>
 
-    <label for="new_age">Age</label>
-    <input type="number" id="new_age" name="new_age" required>
+        <div class="form-group">
+            <label for="new_email">Email</label>
+            <input type="email" id="new_email" name="new_email" required>
+        </div>
 
-    <label for="new_email">Email</label>
-    <input type="email" id="new_email" name="new_email" required>
+        <div class="form-group">
+            <label for="new_number">Phone Number</label>
+            <input type="text" id="new_number" name="new_number" required>
+        </div>
 
-    <label for="new_number">Phone Number</label>
-    <input type="text" id="new_number" name="new_number" required>
-
-    <button type="submit">Create Account</button>
-</form>
-
-</body>
-</html>
+        <button type="submit">Create Account</button>
+    </form>
+</div>
+{% endblock %}
