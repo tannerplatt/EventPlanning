@@ -335,3 +335,198 @@ a:hover {
         flex-direction: column;
     }
 }
+
+/* Event Details Page Styles */
+.event-details-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    margin: 2rem auto;
+    max-width: 800px;
+}
+
+.event-details-card h1 {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.event-info {
+    display: grid;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-section {
+    background-color: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.info-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.attendees-list {
+    list-style: none;
+    padding: 0;
+}
+
+.attendees-list li {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .event-details-card {
+        padding: 1rem;
+        margin: 1rem;
+    }
+
+    .event-info {
+        gap: 1rem;
+    }
+}
+
+/* Invite Management Styles */
+.invite-section {
+    background-color: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
+}
+
+.invite-section h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.current-invites {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 1.5rem;
+}
+
+.current-invites li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    margin-bottom: 0.5rem;
+}
+
+.btn-small {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.9rem;
+    background-color: var(--danger-color);
+}
+
+.btn-small:hover {
+    background-color: #c82333;
+}
+
+/* Searchable User Selection Styles */
+.search-container {
+    margin-bottom: 2rem;
+    background: none;
+    border-radius: 0;
+}
+
+.search-wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+    background: none;
+    border-radius: 0;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-color);
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 0.25rem;
+}
+
+.search-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-item:last-child {
+    border-bottom: none;
+}
+
+.search-item:hover {
+    background-color: var(--card-bg);
+}
+
+.selected-users {
+    background-color: var(--bg-color, #fff);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-top: 1rem;
+    box-shadow: var(--box-shadow);
+}
+
+.selected-users h3 {
+    margin-bottom: 0.75rem;
+    color: var(--primary-color);
+    font-size: 1.1rem;
+}
+
+.selected-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.selected-user {
+    display: flex;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--border-radius);
+    font-size: 0.9rem;
+}
+
+.remove-user {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    padding: 0 0.25rem;
+}
+
+.remove-user:hover {
+    color: #c82333;
+}

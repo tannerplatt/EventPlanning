@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}{{ event.Name }} - Event Details{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="event-details-card">
+        <h1>{{ event.Name }}</h1>
+
+        <div class="event-info">
+            <div class="info-section">
+                <h3>Event Information</h3>
+                <p><strong>Date:</strong> {{ event.Date }}</p>
+                <p><strong>Venue:</strong> {{ event.VenueName }}</p>
+                <p><strong>Theme:</strong> {{ event.Theme }}</p>
+                <p><strong>Created by:</strong> {{ event.CreatorName }}</p>
+            </div>
+
+            <div class="info-section">
+                <h3>Description</h3>
+                <p>{{ event.Description }}</p>
+            </div>
+
+            <div class="info-section">
+                <h3>Attendees</h3>
+                {% if attendees %}
+                <ul class="attendees-list">
+                    {% for attendee in attendees %}
+                    <li>{{ attendee.Name }} ({{ attendee.Status }})</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No attendees yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{{ url_for('dashboard') }}" class="btn">Back to Dashboard</a>
+            {% if is_creator %}
+            <a href="{{ url_for('edit_event', event_id=event.EventID) }}" class="btn">Edit Event</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -234,5 +234,159 @@ def events():
     conn.close()
     return render_template('events.html', events=events)
 
+@app.route('/event/<int:event_id>')
+def event_details(event_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        # Get event details with creator name and venue name
+        cursor.execute("""
+            SELECT e.*, u.Name as CreatorName, v.Name as VenueName
+            FROM Events e
+            JOIN Users u ON e.UserID = u.UserID
+            LEFT JOIN Venues v ON e.VenueID = v.VenueID
+            WHERE e.EventID = %s
+        """, (event_id,))
+        event = cursor.fetchone()
+        
+        if not event:
+            return "Event not found", 404
+        
+        # Get attendees and their status
+        cursor.execute("""
+            SELECT u.Name, i.RecipientStatus as Status
+            FROM Invites i
+            JOIN Users u ON i.UserID = u.UserID
+            WHERE i.EventID = %s
+        """, (event_id,))
+        attendees = cursor.fetchall()
+        
+        # Check if current user is the creator
+        is_creator = event['UserID'] == session['user_id']
+        
+        conn.close()
+        return render_template('event_details.html', 
+                             event=event,
+                             attendees=attendees,
+                             is_creator=is_creator)
+    except Exception as e:
+        print(f"Error loading event details: {str(e)}")
+        return f"Error loading event details: {str(e)}"
+
+@app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+def edit_event(event_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        # Get event details
+        cursor.execute("""
+            SELECT * FROM Events WHERE EventID = %s
+        """, (event_id,))
+        event = cursor.fetchone()
+        
+        if not event:
+            return "Event not found", 404
+            
+        # Check if user is the creator
+        if event['UserID'] != session['user_id']:
+            return "You don't have permission to edit this event", 403
+            
+        if request.method == 'POST':
+            # Update event
+            cursor.execute("""
+                UPDATE Events 
+                SET Name = %s, Date = %s, Description = %s, Theme = %s, VenueID = %s
+                WHERE EventID = %s
+            """, (
+                request.form['name'],
+                request.form['date'],
+                request.form['description'],
+                request.form['theme'],
+                request.form['venue_id'],
+                event_id
+            ))
+            
+            # Handle new invites
+            new_invites = request.form.getlist('new_invites')
+            for user_id in new_invites:
+                cursor.execute("""
+                    INSERT INTO Invites (UserID, EventID, DateSent, Text, RecipientStatus)
+                    VALUES (%s, %s, NOW(), %s, 'Pending')
+                """, (user_id, event_id, f"You're invited to {request.form['name']}"))
+            
+            conn.commit()
+            return redirect(url_for('event_details', event_id=event_id))
+            
+        # GET: Show edit form
+        cursor.execute("SELECT * FROM Venues")
+        venues = cursor.fetchall()
+        
+        # Get current invites
+        cursor.execute("""
+            SELECT u.UserID, u.Name, i.RecipientStatus as Status
+            FROM Invites i
+            JOIN Users u ON i.UserID = u.UserID
+            WHERE i.EventID = %s
+        """, (event_id,))
+        current_invites = cursor.fetchall()
+        
+        # Get available users (excluding current invites)
+        cursor.execute("""
+            SELECT UserID, Name FROM Users 
+            WHERE UserID NOT IN (
+                SELECT UserID FROM Invites WHERE EventID = %s
+            ) AND UserID != %s
+        """, (event_id, session['user_id']))
+        available_users = cursor.fetchall()
+        
+        conn.close()
+        return render_template('edit_event.html', 
+                             event=event, 
+                             venues=venues,
+                             current_invites=current_invites,
+                             available_users=available_users)
+        
+    except Exception as e:
+        print(f"Error editing event: {str(e)}")
+        return f"Error editing event: {str(e)}"
+
+@app.route('/remove_invite/<int:user_id>/<int:event_id>')
+def remove_invite(user_id, event_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        # Verify user is the event creator
+        cursor.execute("SELECT UserID FROM Events WHERE EventID = %s", (event_id,))
+        event = cursor.fetchone()
+        
+        if not event or event['UserID'] != session['user_id']:
+            return "You don't have permission to remove invites", 403
+            
+        # Remove the invite
+        cursor.execute("""
+            DELETE FROM Invites 
+            WHERE UserID = %s AND EventID = %s
+        """, (user_id, event_id))
+        
+        conn.commit()
+        conn.close()
+        return redirect(url_for('edit_event', event_id=event_id))
+        
+    except Exception as e:
+        print(f"Error removing invite: {str(e)}")
+        return f"Error removing invite: {str(e)}"
+
 if __name__ == '__main__':
     app.run(debug=True)

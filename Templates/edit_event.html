@@ -1,65 +1,86 @@
 {% extends "base.html" %}
-{% block title %}Create Event{% endblock %}
+{% block title %}Edit Event{% endblock %}
 {% block content %}
 <div class="form-container">
-    <h1>Create a New Event</h1>
+    <h1>Edit Event</h1>
 
     <form method="POST" class="form-group">
         <div class="form-group">
             <label for="name">Event Name:</label>
-            <input type="text" name="name" id="name" required>
+            <input type="text" name="name" id="name" value="{{ event.Name }}" required>
         </div>
 
         <div class="form-group">
             <label for="date">Event Date:</label>
-            <input type="date" name="date" id="date" required>
+            <input type="date" name="date" id="date" value="{{ event.Date }}" required>
         </div>
 
         <div class="form-group">
             <label for="description">Description:</label>
-            <textarea name="description" id="description"></textarea>
+            <textarea name="description" id="description">{{ event.Description }}</textarea>
         </div>
 
         <div class="form-group">
             <label for="theme">Event Theme:</label>
-            <input type="text" name="theme" id="theme">
+            <input type="text" name="theme" id="theme" value="{{ event.Theme }}">
         </div>
 
         <div class="form-group">
             <label for="venue_id">Venue:</label>
             <select name="venue_id" id="venue_id">
                 {% for venue in venues %}
-                <option value="{{ venue['VenueID'] }}">{{ venue['Name'] }}</option>
+                <option value="{{ venue.VenueID }}" {% if venue.VenueID==event.VenueID %}selected{% endif %}>
+                    {{ venue.Name }}
+                </option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="form-group">
-            <label>Invite Users:</label>
-            <div class="search-container">
-                <div class="search-wrapper">
-                    <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
-                    <div class="search-results" id="userResults">
-                        {% for user in users %}
-                        <div class="search-item" data-user-id="{{ user['UserID'] }}"
-                            data-user-name="{{ user['Name'] }}">
-                            <span>{{ user['Name'] }}</span>
+            <label>Manage Invites:</label>
+            <div class="invite-section">
+                <h3>Current Invites</h3>
+                {% if current_invites %}
+                <ul class="current-invites">
+                    {% for invite in current_invites %}
+                    <li>
+                        {{ invite.Name }} ({{ invite.Status }})
+                        <button type="button" class="btn btn-small"
+                            onclick="removeInvite({{ invite.UserID }})">Remove</button>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p>No invites yet.</p>
+                {% endif %}
+
+                <h3>Add New Invites</h3>
+                <div class="search-container">
+                    <div class="search-wrapper">
+                        <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
+                        <div class="search-results" id="userResults">
+                            {% for user in available_users %}
+                            <div class="search-item" data-user-id="{{ user.UserID }}" data-user-name="{{ user.Name }}">
+                                <span>{{ user.Name }}</span>
+                            </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
+                    <input type="hidden" name="new_invites" id="newInvites">
                 </div>
-                <input type="hidden" name="invite_users" id="inviteUsers">
+                <div class="selected-users" id="selectedUsers">
+                    <h3>Selected Users</h3>
+                    <div class="selected-list"></div>
+                </div>
             </div>
         </div>
-        <div class="selected-users" id="selectedUsers">
-            <h3>Selected Users</h3>
-            <div class="selected-list"></div>
+
+        <div class="button-group">
+            <button type="submit" class="btn">Save Changes</button>
+            <a href="{{ url_for('event_details', event_id=event.EventID) }}" class="btn"
+                style="background-color: var(--secondary-color);">Cancel</a>
         </div>
-
-        <button type="submit">Create Event</button>
     </form>
-
-    <a href="{{ url_for('dashboard') }}" class="back-link">← Back to Dashboard</a>
 </div>
 
 <script>
@@ -67,7 +88,7 @@
         const searchInput = document.getElementById('userSearch');
         const userResults = document.getElementById('userResults');
         const selectedList = document.querySelector('.selected-list');
-        const inviteUsersInput = document.getElementById('inviteUsers');
+        const newInvitesInput = document.getElementById('newInvites');
 
         // Store selected users
         const selectedUsers = new Set();
@@ -116,9 +137,9 @@
                     const userElement = document.createElement('div');
                     userElement.className = 'selected-user';
                     userElement.innerHTML = `
-                    <span>${item.dataset.userName}</span>
-                    <button type="button" class="remove-user" data-id="${userId}">×</button>
-                `;
+                        <span>${item.dataset.userName}</span>
+                        <button type="button" class="remove-user" data-id="${userId}">×</button>
+                    `;
                     selectedList.appendChild(userElement);
                 }
             });
@@ -126,7 +147,7 @@
 
         // Update hidden input for form submission
         function updateHiddenInput() {
-            inviteUsersInput.value = Array.from(selectedUsers).join(',');
+            newInvitesInput.value = Array.from(selectedUsers).join(',');
         }
 
         // Handle removing selected users
@@ -146,5 +167,11 @@
             }
         });
     });
+
+    function removeInvite(userId) {
+        if (confirm('Are you sure you want to remove this invite?')) {
+            window.location.href = `/remove_invite/${userId}/{{ event.EventID }}`;
+        }
+    }
 </script>
 {% endblock %}
