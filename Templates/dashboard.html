@@ -27,11 +27,21 @@
 
 <div class="card">
   <h2>Your Events</h2>
-  <ul>
+  {% if user_events %}
+  <div class="events-list">
     {% for event in user_events %}
-    <li><a href="/event/{{ event['event_id'] }}">{{ event['name'] }}</a></li>
+    <div class="event-item">
+      <h3>{{ event.Name }}</h3>
+      <p><strong>Date:</strong> {{ event.Date }}</p>
+      <p><strong>Venue:</strong> {{ event.VenueName }}</p>
+      <p><strong>Theme:</strong> {{ event.Theme }}</p>
+      <a href="/event/{{ event.EventID }}" class="btn">View Details</a>
+    </div>
     {% endfor %}
-  </ul>
+  </div>
+  {% else %}
+  <p>No events yet.</p>
+  {% endif %}
 </div>
 
 <div class="card">
