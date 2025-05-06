@@ -41,7 +41,7 @@ def dashboard():
     
     # Get user's invites
     cursor.execute("""
-        SELECT Invites.InviteID, Events.Name AS event_name, Invites.RecipientStatus AS status
+        SELECT Invites.InviteID AS invite_id, Events.Name AS event_name, Invites.RecipientStatus AS status
         FROM Invites
         JOIN Events ON Invites.EventID = Events.EventID
         WHERE Invites.UserID = %s

@@ -12,9 +12,11 @@
     <h3>{{ invite['event_name'] }}</h3>
     <p>Status: <span class="status {{ invite['status']|lower }}">{{ invite['status'] }}</span></p>
     {% if invite['status'] == 'Pending' %}
-    <a href="/respond-invite/{{ invite['invite_id'] }}/Attending" class="btn">Accept</a>
-    <a href="/respond-invite/{{ invite['invite_id'] }}/Declined" class="btn"
-      style="background-color: var(--danger-color);">Decline</a>
+    <div class="button-group">
+      <a href="{{ url_for('respond_invite', invite_id=invite['invite_id'], status='Accepted') }}" class="btn">Accept</a>
+      <a href="{{ url_for('respond_invite', invite_id=invite['invite_id'], status='Declined') }}" class="btn"
+        style="background-color: var(--danger-color);">Decline</a>
+    </div>
     {% endif %}
   </div>
   {% endfor %}
@@ -33,7 +35,9 @@
 </div>
 
 <div class="card">
-  <a href="/create-event" class="btn">Create New Event</a>
-  <a href="/vendors" class="btn">View Vendors</a>
+  <div class="button-group">
+    <a href="/create-event" class="btn">Create New Event</a>
+    <a href="/vendors" class="btn">View Vendors</a>
+  </div>
 </div>
 {% endblock %}
