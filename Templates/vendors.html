@@ -2,15 +2,21 @@
 {% extends "base.html" %}
 {% block title %}Vendors{% endblock %}
 {% block content %}
-<h1>Available Vendors</h1>
-<div class="card">
-  <ul>
-    {% for vendor in vendors %}
-    <li>
-      <strong>{{ vendor['name'] }}</strong> - {{ vendor['service'] }} (Owner: {{ vendor['owner'] }}, Staff: {{
-      vendor['staff'] }})
-    </li>
-    {% endfor %}
-  </ul>
+<div class="container">
+    <h1>Available Vendors</h1>
+    <div class="vendors-grid">
+        {% for vendor in vendors %}
+        <div class="vendor-card">
+            <h3>{{ vendor['Name'] }}</h3>
+            <div class="vendor-details">
+                <p><strong>Service Type:</strong> {{ vendor['ServiceType'] }}</p>
+                <p><strong>Owner:</strong> {{ vendor['Owner'] }}</p>
+                <p><strong>Staff Count:</strong> {{ vendor['StaffCount'] }}</p>
+                <p><strong>Contact:</strong> {{ vendor['PhoneNumber'] }}</p>
+                <a href="tel:{{ vendor['PhoneNumber'] }}" class="contact-button">Call Vendor</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

@@ -530,3 +530,130 @@ a:hover {
 .remove-user:hover {
     color: #c82333;
 }
+
+/* Business Registration Styles */
+.business-registration {
+    background-color: var(--bg-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.business-registration .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.business-registration label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.business-registration select,
+.business-registration input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.business-registration select:focus,
+.business-registration input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+#vendor-fields,
+#venue-fields {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
+    border: 1px solid var(--border-color);
+}
+
+.business-registration button[type="submit"] {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* Responsive adjustments for business registration */
+@media (max-width: 768px) {
+    .business-registration {
+        padding: 1rem;
+    }
+    
+    .business-registration .form-group {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Vendors Grid Styles */
+.vendors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.vendor-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    transition: var(--transition);
+}
+
+.vendor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.vendor-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.vendor-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.vendor-details p {
+    margin: 0;
+    color: var(--dark-color);
+}
+
+.vendor-details strong {
+    color: var(--primary-color);
+}
+
+.vendor-card .contact-button {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.vendor-card .contact-button:hover {
+    background-color: #45a049;
+}
+
+/* Responsive adjustments for vendors grid */
+@media (max-width: 768px) {
+    .vendors-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}

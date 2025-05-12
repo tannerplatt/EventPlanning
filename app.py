@@ -388,5 +388,54 @@ def remove_invite(user_id, event_id):
         print(f"Error removing invite: {str(e)}")
         return f"Error removing invite: {str(e)}"
 
+@app.route('/register-business', methods=['GET'])
+def register_business_page():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('register_business.html')
+
+@app.route('/register_business', methods=['POST'])
+def register_business():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+        
+    business_type = request.form['business_type']
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    
+    try:
+        if business_type == 'vendor':
+            # Insert new vendor
+            cursor.execute('''
+                INSERT INTO Vendors (Name, ServiceType, Owner, StaffCount, PhoneNumber)
+                VALUES (%s, %s, %s, %s, %s)
+            ''', (
+                request.form['name'],
+                request.form['service_type'],
+                request.form['owner'],
+                request.form['staff_count'],
+                request.form['phone_number']
+            ))
+        elif business_type == 'venue':
+            # Insert new venue
+            cursor.execute('''
+                INSERT INTO Venues (Name, Location, Capacity, Type)
+                VALUES (%s, %s, %s, %s)
+            ''', (
+                request.form['name'],
+                request.form['location'],
+                request.form['capacity'],
+                request.form['venue_type']
+            ))
+            
+        conn.commit()
+        return redirect(url_for('dashboard'))
+    except Exception as e:
+        print(f"Error registering business: {str(e)}")
+        return f"Error registering business: {str(e)}"
+    finally:
+        cursor.close()
+        conn.close()
+
 if __name__ == '__main__':
     app.run(debug=True)

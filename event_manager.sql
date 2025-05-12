@@ -71,13 +71,14 @@ CREATE TABLE Vendors (
     Name VARCHAR(100),
     ServiceType VARCHAR(100),
     Owner VARCHAR(100),
-    StaffCount INT
+    StaffCount INT,
+    PhoneNumber VARCHAR(20)
 );
 
-INSERT INTO Vendors (Name, ServiceType, Owner, StaffCount) VALUES
-('Elite Catering', 'Catering', 'John Chef', 15),
-('AV Pros', 'Audio/Visual', 'Mike Sound', 10),
-('PhotoTime', 'Photography', 'Sarah Click', 5);
+INSERT INTO Vendors (Name, ServiceType, Owner, StaffCount, PhoneNumber) VALUES
+('Elite Catering', 'Catering', 'John Chef', 15, '(555) 123-4567'),
+('AV Pros', 'Audio/Visual', 'Mike Sound', 10, '(555) 234-5678'),
+('PhotoTime', 'Photography', 'Sarah Click', 5, '(555) 345-6789');
 
 -- Vendor_Event junction table
 CREATE TABLE Vendor_Event (

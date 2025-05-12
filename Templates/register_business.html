@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Register Business{% endblock %}
+{% block content %}
+<div class="form-container">
+    <h1>Register Your Business</h1>
+    <p class="form-description">Join our network of trusted vendors and venues to connect with event planners.</p>
+
+    <form method="POST" action="{{ url_for('register_business') }}" class="form-group">
+        <div class="form-group">
+            <label for="business_type">Register as:</label>
+            <select name="business_type" id="business_type" required onchange="toggleBusinessForm()">
+                <option value="">Select business type...</option>
+                <option value="vendor">Vendor</option>
+                <option value="venue">Venue</option>
+            </select>
+        </div>
+
+        <!-- Common fields -->
+        <div class="form-group">
+            <label for="name">Business Name:</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+
+        <!-- Vendor-specific fields -->
+        <div id="vendor-fields" style="display: none;">
+            <h3>Vendor Information</h3>
+            <div class="form-group">
+                <label for="service_type">Service Type:</label>
+                <input type="text" name="service_type" id="service_type" placeholder="e.g., Catering, Photography">
+            </div>
+            <div class="form-group">
+                <label for="owner">Owner Name:</label>
+                <input type="text" name="owner" id="owner">
+            </div>
+            <div class="form-group">
+                <label for="staff_count">Number of Staff:</label>
+                <input type="number" name="staff_count" id="staff_count" min="1">
+            </div>
+            <div class="form-group">
+                <label for="phone_number">Phone Number:</label>
+                <input type="tel" name="phone_number" id="phone_number" placeholder="(555) 123-4567" pattern="[\(]\d{3}[\)]\s\d{3}[\-]\d{4}" required>
+                <small class="form-text">Format: (555) 123-4567</small>
+            </div>
+        </div>
+
+        <!-- Venue-specific fields -->
+        <div id="venue-fields" style="display: none;">
+            <h3>Venue Information</h3>
+            <div class="form-group">
+                <label for="location">Location:</label>
+                <input type="text" name="location" id="location" placeholder="e.g., Newport Beach, CA">
+            </div>
+            <div class="form-group">
+                <label for="capacity">Capacity:</label>
+                <input type="number" name="capacity" id="capacity" min="1" placeholder="Maximum number of guests">
+            </div>
+            <div class="form-group">
+                <label for="venue_type">Venue Type:</label>
+                <select name="venue_type" id="venue_type">
+                    <option value="Indoor">Indoor</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Rooftop">Rooftop</option>
+                    <option value="Ballroom">Ballroom</option>
+                    <option value="Restaurant">Restaurant</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn">Register Business</button>
+            <a href="{{ url_for('dashboard') }}" class="btn" style="background-color: var(--secondary-color);">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleBusinessForm() {
+    const businessType = document.getElementById('business_type').value;
+    const vendorFields = document.getElementById('vendor-fields');
+    const venueFields = document.getElementById('venue-fields');
+    
+    // Hide all fields first
+    vendorFields.style.display = 'none';
+    venueFields.style.display = 'none';
+    
+    // Show relevant fields
+    if (businessType === 'vendor') {
+        vendorFields.style.display = 'block';
+        // Make vendor fields required
+        document.getElementById('service_type').required = true;
+        document.getElementById('owner').required = true;
+        document.getElementById('staff_count').required = true;
+        document.getElementById('phone_number').required = true;
+        // Make venue fields not required
+        document.getElementById('location').required = false;
+        document.getElementById('capacity').required = false;
+        document.getElementById('venue_type').required = false;
+    } else if (businessType === 'venue') {
+        venueFields.style.display = 'block';
+        // Make venue fields required
+        document.getElementById('location').required = true;
+        document.getElementById('capacity').required = true;
+        document.getElementById('venue_type').required = true;
+        // Make vendor fields not required
+        document.getElementById('service_type').required = false;
+        document.getElementById('owner').required = false;
+        document.getElementById('staff_count').required = false;
+        document.getElementById('phone_number').required = false;
+    }
+}
+</script>
+{% endblock %} 
