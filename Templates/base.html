@@ -10,6 +10,7 @@
 
 <body>
     <nav>
+        {% if session.get('user_id') %}
         <a href="{{ url_for('dashboard') }}">Dashboard</a>
         <a href="{{ url_for('invites') }}">Invites</a>
         <a href="{{ url_for('events') }}">Events</a>
@@ -17,6 +18,9 @@
         <a href="{{ url_for('vendors') }}">Vendors</a>
         <a href="{{ url_for('register_business_page') }}">Register Business</a>
         <a href="{{ url_for('login') }}">Logout</a>
+        {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
     </nav>
     <div class="container">
         {% block content %}{% endblock %}

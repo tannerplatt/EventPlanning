@@ -10,6 +10,12 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    # Handle logout
+    if request.method == 'GET' and 'user_id' in session:
+        session.pop('user_id', None)
+        return redirect(url_for('login'))
+        
+    # Handle login
     if request.method == 'POST':
         email = request.form['email']
         conn = get_db_connection()
