@@ -109,6 +109,8 @@ h2 {
 
 .form-group {
     margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
 }
 
 .form-group label {
@@ -464,20 +466,22 @@ a:hover {
     right: 0;
     max-height: 200px;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    border: 1px solid #ddd;
     border-radius: var(--border-radius);
-    background-color: var(--bg-color);
+    background-color: white;
     z-index: 1000;
     display: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     margin-top: 0.25rem;
 }
 
 .search-item {
     padding: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid #eee;
     cursor: pointer;
     transition: background-color 0.2s;
+    background-color: white;
+    color: var(--dark-color);
 }
 
 .search-item:last-child {
@@ -485,7 +489,7 @@ a:hover {
 }
 
 .search-item:hover {
-    background-color: var(--card-bg);
+    background-color: #f5f5f5;
 }
 
 .selected-users {
@@ -656,4 +660,9 @@ a:hover {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
+}
+
+/* When search results are visible, increase z-index */
+.form-group:has(.search-results[style*="display: block"]) {
+    z-index: 1000;
 }
