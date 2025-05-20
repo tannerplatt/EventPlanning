@@ -1,37 +1,45 @@
+#flask application for event planning system
 from flask import Flask, render_template, request, redirect, url_for, session
 from db_config import get_db_connection
 
+#initialize flask application
 app = Flask(__name__)
-app.secret_key = 'EVENT1!'
+app.secret_key = 'EVENT1!'  #secret key for session management
 
+#route for home page redirects to login
 @app.route('/')
 def home():
     return redirect(url_for('login'))
 
+#route for login/logout functionality
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Handle logout
+    #handle logout clears session and redirects to login page
     if request.method == 'GET' and 'user_id' in session:
         session.pop('user_id', None)
         return redirect(url_for('login'))
         
-    # Handle login
+    #handle login validates email and creates session
     if request.method == 'POST':
         email = request.form['email']
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
+        #query database for user with matching email
         cursor.execute("SELECT * FROM Users WHERE Email = %s", (email,))
         user = cursor.fetchone()
         conn.close()
         if user:
+            #create session for authenticated user
             session['user_id'] = user['UserID']
             return redirect(url_for('dashboard'))
         else:
             return "Invalid email"
     return render_template('login.html')
 
+#route for user dashboard displays user's events and invites
 @app.route('/dashboard')
 def dashboard():
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -42,12 +50,12 @@ def dashboard():
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Get user's name
+        #get user's basic information
         cursor.execute("SELECT Name FROM Users WHERE UserID = %s", (user_id,))
         user = cursor.fetchone()
         print(f"Found user: {user}")
         
-        # Get user's created events
+        #get events created by user
         cursor.execute("""
             SELECT Events.*, Venues.Name AS VenueName
             FROM Events
@@ -57,7 +65,7 @@ def dashboard():
         created_events = cursor.fetchall()
         print(f"Found {len(created_events)} created events")
         
-        # Get user's invited events
+        #get events where user is invited
         cursor.execute("""
             SELECT Events.*, Venues.Name AS VenueName
             FROM Events
@@ -68,13 +76,13 @@ def dashboard():
         invited_events = cursor.fetchall()
         print(f"Found {len(invited_events)} invited events")
         
-        # Combine events, removing duplicates
+        #combine and deduplicate events
         all_events = created_events + invited_events
         unique_events = {event['EventID']: event for event in all_events}.values()
         events = list(unique_events)
         print(f"Total unique events: {len(events)}")
         
-        # Get user's invites
+        #get user's pending invites
         cursor.execute("""
             SELECT Invites.InviteID AS invite_id, Events.Name AS event_name, Invites.RecipientStatus AS status
             FROM Invites
@@ -93,14 +101,17 @@ def dashboard():
         print(f"Error loading dashboard: {str(e)}")
         return f"Error loading dashboard: {str(e)}"
 
+#route for viewing and managing invites
 @app.route('/invites')
 def invites():
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect('/login')
 
     user_id = session['user_id']
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
+    #get all invites for the user with event details
     cursor.execute("""
         SELECT Invites.InviteID, Events.Name AS EventName, Invites.DateSent, Invites.Text, Invites.RecipientStatus
         FROM Invites
@@ -111,9 +122,10 @@ def invites():
     conn.close()
     return render_template('invites.html', invites=invites)
 
-
+#route for responding to event invites
 @app.route('/respond_invite/<int:invite_id>/<status>')
 def respond_invite(invite_id, status):
+    #update invite status in database
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("UPDATE Invites SET RecipientStatus = %s WHERE InviteID = %s", (status, invite_id))
@@ -121,8 +133,10 @@ def respond_invite(invite_id, status):
     conn.close()
     return redirect(url_for('invites'))
 
+#route for creating new events
 @app.route('/create-event', methods=['GET', 'POST'])
 def create_event():
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
@@ -131,6 +145,7 @@ def create_event():
 
     if request.method == 'POST':
         try:
+            #get form data for new event
             event_name = request.form['name']
             date = request.form['date']
             description = request.form['description']
@@ -138,21 +153,21 @@ def create_event():
             venue_id = request.form['venue_id']
             user_id = session['user_id']
 
-            # Debug print
+            #debug print
             print(f"Creating event with data: name={event_name}, date={date}, user_id={user_id}")
 
-            # Step 1: Insert the event into the Events table
+            #create new event in database
             cursor.execute('''
                 INSERT INTO Events (UserID, VenueID, Name, Date, Description, Theme)
                 VALUES (%s, %s, %s, %s, %s, %s)
             ''', (user_id, venue_id, event_name, date, description, theme))
             conn.commit()
 
-            # Step 2: Get the EventID of the newly created event
+            #get id of newly created event
             event_id = cursor.lastrowid
             print(f"Created event with ID: {event_id}")
 
-            # Step 3: Handle invites for users selected in the form
+            #create invites for selected users
             invite_users = request.form.getlist('invite_users')
             print(f"Inviting users: {invite_users}")
             
@@ -171,11 +186,12 @@ def create_event():
             print(f"Error creating event: {str(e)}")
             return f"Error creating event: {str(e)}"
 
-    # GET: Show form
+    #get: show event creation form
+    #get list of available venues
     cursor.execute('SELECT * FROM Venues')
     venues = cursor.fetchall()
 
-    # Get the list of all users to invite
+    #get list of users for invites
     cursor.execute('SELECT * FROM Users')
     users = cursor.fetchall()
 
@@ -184,16 +200,17 @@ def create_event():
 
     return render_template('create_event.html', venues=venues, users=users)
 
+#route for user registration
 @app.route('/register', methods=['POST'])
 def register():
     if request.method == 'POST':
-        # Get user inputs
+        #get registration form data
         new_name = request.form['new_name']
         new_age = request.form['new_age']
         new_email = request.form['new_email']
         new_number = request.form['new_number']
 
-        # Check if user already exists with this email
+        #check for existing user with same email
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM Users WHERE Email = %s", (new_email,))
@@ -202,7 +219,7 @@ def register():
         if existing_user:
             return "This email is already in use. Please log in."
 
-        # Insert new user into the Users table
+        #create new user in database
         cursor.execute('''
             INSERT INTO Users (Name, Age, Email, Number)
             VALUES (%s, %s, %s, %s)
@@ -214,11 +231,10 @@ def register():
 
         return redirect(url_for('login'))
 
-
-
-
+#route for viewing available vendors
 @app.route('/vendors')
 def vendors():
+    #get all vendors from database
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM Vendors")
@@ -226,9 +242,10 @@ def vendors():
     conn.close()
     return render_template('vendors.html', vendors=vendors)
 
-
+#route for viewing all events
 @app.route('/events')
 def events():
+    #get all events with venue information
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
@@ -240,8 +257,10 @@ def events():
     conn.close()
     return render_template('events.html', events=events)
 
+#route for viewing event details
 @app.route('/event/<int:event_id>')
 def event_details(event_id):
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -249,7 +268,7 @@ def event_details(event_id):
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Get event details with creator name and venue name
+        #get detailed event information including creator and venue
         cursor.execute("""
             SELECT e.*, u.Name as CreatorName, v.Name as VenueName
             FROM Events e
@@ -262,7 +281,7 @@ def event_details(event_id):
         if not event:
             return "Event not found", 404
         
-        # Get attendees and their status
+        #get list of attendees and their status
         cursor.execute("""
             SELECT u.Name, i.RecipientStatus as Status
             FROM Invites i
@@ -271,7 +290,7 @@ def event_details(event_id):
         """, (event_id,))
         attendees = cursor.fetchall()
         
-        # Check if current user is the creator
+        #check if current user is event creator
         is_creator = event['UserID'] == session['user_id']
         
         conn.close()
@@ -283,8 +302,10 @@ def event_details(event_id):
         print(f"Error loading event details: {str(e)}")
         return f"Error loading event details: {str(e)}"
 
+#route for editing existing events
 @app.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 def edit_event(event_id):
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -292,7 +313,7 @@ def edit_event(event_id):
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Get event details
+        #get event details
         cursor.execute("""
             SELECT * FROM Events WHERE EventID = %s
         """, (event_id,))
@@ -301,12 +322,12 @@ def edit_event(event_id):
         if not event:
             return "Event not found", 404
             
-        # Check if user is the creator
+        #verify user has permission to edit
         if event['UserID'] != session['user_id']:
             return "You don't have permission to edit this event", 403
             
         if request.method == 'POST':
-            # Update event
+            #update event information
             cursor.execute("""
                 UPDATE Events 
                 SET Name = %s, Date = %s, Description = %s, Theme = %s, VenueID = %s
@@ -320,7 +341,7 @@ def edit_event(event_id):
                 event_id
             ))
             
-            # Handle new invites
+            #handle new invites
             new_invites = request.form.getlist('new_invites')
             for user_id in new_invites:
                 cursor.execute("""
@@ -331,11 +352,11 @@ def edit_event(event_id):
             conn.commit()
             return redirect(url_for('event_details', event_id=event_id))
             
-        # GET: Show edit form
+        #get available venues
         cursor.execute("SELECT * FROM Venues")
         venues = cursor.fetchall()
         
-        # Get current invites
+        #get current invites
         cursor.execute("""
             SELECT u.UserID, u.Name, i.RecipientStatus as Status
             FROM Invites i
@@ -344,7 +365,7 @@ def edit_event(event_id):
         """, (event_id,))
         current_invites = cursor.fetchall()
         
-        # Get available users (excluding current invites)
+        #get users available for new invites
         cursor.execute("""
             SELECT UserID, Name FROM Users 
             WHERE UserID NOT IN (
@@ -364,8 +385,10 @@ def edit_event(event_id):
         print(f"Error editing event: {str(e)}")
         return f"Error editing event: {str(e)}"
 
+#route for removing invites
 @app.route('/remove_invite/<int:user_id>/<int:event_id>')
 def remove_invite(user_id, event_id):
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -373,14 +396,14 @@ def remove_invite(user_id, event_id):
     cursor = conn.cursor(dictionary=True)
     
     try:
-        # Verify user is the event creator
+        #verify user has permission to remove invites
         cursor.execute("SELECT UserID FROM Events WHERE EventID = %s", (event_id,))
         event = cursor.fetchone()
         
         if not event or event['UserID'] != session['user_id']:
             return "You don't have permission to remove invites", 403
             
-        # Remove the invite
+        #remove the invite from database
         cursor.execute("""
             DELETE FROM Invites 
             WHERE UserID = %s AND EventID = %s
@@ -394,14 +417,18 @@ def remove_invite(user_id, event_id):
         print(f"Error removing invite: {str(e)}")
         return f"Error removing invite: {str(e)}"
 
+#route for business registration page
 @app.route('/register-business', methods=['GET'])
 def register_business_page():
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('register_business.html')
 
+#route for processing business registration
 @app.route('/register_business', methods=['POST'])
 def register_business():
+    #check if user is logged in
     if 'user_id' not in session:
         return redirect(url_for('login'))
         
@@ -411,7 +438,7 @@ def register_business():
     
     try:
         if business_type == 'vendor':
-            # Insert new vendor
+            #insert new vendor into database
             cursor.execute('''
                 INSERT INTO Vendors (Name, ServiceType, Owner, StaffCount, PhoneNumber)
                 VALUES (%s, %s, %s, %s, %s)
@@ -423,7 +450,7 @@ def register_business():
                 request.form['phone_number']
             ))
         elif business_type == 'venue':
-            # Insert new venue
+            #insert new venue into database
             cursor.execute('''
                 INSERT INTO Venues (Name, Location, Capacity, Type)
                 VALUES (%s, %s, %s, %s)
@@ -443,5 +470,6 @@ def register_business():
         cursor.close()
         conn.close()
 
+#run the application in debug mode
 if __name__ == '__main__':
     app.run(debug=True)
