@@ -1,4 +1,4 @@
-/* Global Styles */
+/*global Styles */
 :root {
     --primary-color: #4a6fa5;
     --secondary-color: #6c757d;
@@ -301,6 +301,7 @@ a:hover {
     line-height: 1.5;
 }
 
+/* LLM Used Here */
 /* Responsive Design */
 @media (max-width: 1200px) {
     .events-grid {
@@ -338,6 +339,7 @@ a:hover {
     }
 }
 
+/* LLM Used Here */
 /* Event Details Page Styles */
 .event-details-card {
     background-color: var(--card-bg);
@@ -437,6 +439,7 @@ a:hover {
     background-color: #c82333;
 }
 
+/* LLM Used Here */
 /* Searchable User Selection Styles */
 .search-container {
     margin-bottom: 2rem;
@@ -535,6 +538,7 @@ a:hover {
     color: #c82333;
 }
 
+/* LLM Used Here */
 /* Business Registration Styles */
 .business-registration {
     background-color: var(--bg-color);
@@ -584,6 +588,7 @@ a:hover {
     margin-top: 1rem;
 }
 
+/* LLM Used Here */
 /* Responsive adjustments for business registration */
 @media (max-width: 768px) {
     .business-registration {
@@ -654,6 +659,7 @@ a:hover {
     background-color: #45a049;
 }
 
+/* LLM Used Here */
 /* Responsive adjustments for vendors grid */
 @media (max-width: 768px) {
     .vendors-grid {

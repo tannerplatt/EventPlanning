@@ -26,7 +26,9 @@
 None
 
 ## References
-None
+LLM used on the CSS styling.
+    This was approved via an in class discussion with the professor. 
+    Comments added to show where LLM was used within the CSS file.
 
 ## Instructions
 pip3 install flask
