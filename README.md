@@ -49,3 +49,5 @@ Press CTRL+C to quit
  * Restarting with stat
  * Debugger is active!
  * Debugger PIN: 588-689-873
+
+ *click link to view page*
