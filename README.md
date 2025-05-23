@@ -1,7 +1,7 @@
 ## Identifying Information: 
 1. Name: Brady Fisher & Tanner Platt
-2. Student ID: 2413813
-3. Email: brfisher@chapman.edu  
+2. Student ID: 2413813, 2401768
+3. Email: brfisher@chapman.edu, tplatt@chapman.edu
 4. Class: CPSC 408
 5. Assignment: Final Project - Event Planning
 
